@@ -6,11 +6,14 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface ProductServicePort {
-    public Mono<Product> add(Product product);
+    Mono<Product> add(Product product);
 
-    public Mono<Product> updateStock(Product product);
+    Mono<Product> updateStock(Product product);
 
-    public Mono<Void> delete(Product product);
+    Mono<Void> delete(Product product);
 
-    public Flux<BranchTopProduct> findTopPerBranchForFranchise(String franchiseId);
+    Flux<BranchTopProduct> findTopPerBranchForFranchise(String franchiseId);
+
+    Mono<Product> updateName(String name, String productId);
+
 }

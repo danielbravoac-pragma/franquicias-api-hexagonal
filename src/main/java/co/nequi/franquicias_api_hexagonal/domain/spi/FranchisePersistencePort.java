@@ -9,4 +9,6 @@ public interface FranchisePersistencePort {
     Mono<Boolean> exists(String franchiseId);
 
     Mono<Franchise> findById(String franchiseId);
+
+    Mono<Franchise> updateName(String franchiseId, String newName);
 }

@@ -10,4 +10,6 @@ public interface BranchPersistencePort {
     Flux<Branch> listByFranchise(String franchiseId);
 
     Mono<Branch> findById(String branchId);
+
+    Mono<Branch> updateName(String franchiseId, String branchId, String newName);
 }

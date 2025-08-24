@@ -38,6 +38,9 @@ public class DynamoProductRepository implements ProductPersistencePort {
         return AttributeValue.builder().n(Integer.toString(v)).build();
     }
 
+    private static Map<String, AttributeValue> key(String keyPk, String keySk, String pkVal, String skVal){
+        return java.util.Map.of(keyPk, s(pkVal), keySk, s(skVal));
+    }
 
     @Override
     public Mono<Product> add(Product product) {
@@ -118,5 +121,55 @@ public class DynamoProductRepository implements ProductPersistencePort {
                         Instant.parse(i.get("createdAt").s()),
                         Instant.parse(i.getOrDefault("updatedAt",s(Instant.now().toString())).s())
                 ));
+    }
+
+    @Override
+    public Mono<Product> findById(String productId) {
+        var q = QueryRequest.builder()
+                .tableName(DynamoParams.TABLE_NAME.getValue())
+                .indexName(DynamoParams.PRODUCT_BY_ID_INDEX.getValue())
+                .keyConditionExpression("productId = :p")
+                .expressionAttributeValues(Map.of(":p", s(productId)))
+                .limit(1).build();
+
+        return Mono.fromFuture(dynamo.query(q))
+                .flatMap(resp -> Mono.justOrEmpty(resp.items().stream().findFirst()))
+                .map(i -> new Product(
+                        i.get("franchiseId").s(),
+                        i.get("branchId").s(),
+                        i.get("productId").s(),
+                        i.get("name").s(),
+                        Integer.parseInt(i.get("stock").n()),
+                        java.time.Instant.parse(i.get("createdAt").s()),
+                        java.time.Instant.parse(i.getOrDefault("updatedAt", s(Instant.now().toString())).s())
+                ));
+    }
+
+    @Override
+    public Mono<Product> updateName(String franchiseId, String branchId, String productId, String newName) {
+        var now = java.time.Instant.now().toString();
+        var req = UpdateItemRequest.builder()
+                .tableName(DynamoParams.TABLE_NAME.getValue())
+                .key(key(DynamoParams.PK.getValue(), DynamoParams.SK.getValue(), pk(franchiseId), sk(branchId, productId)))
+                .updateExpression("SET #n = :nv, #ua = :ts")
+                .expressionAttributeNames(Map.of("#n","name","#ua","updatedAt"))
+                .expressionAttributeValues(Map.of(":nv", s(newName), ":ts", s(now)))
+                .conditionExpression(DynamoParams.ATTRIBUTE_EXISTS_PK_AND_SK.getValue())
+                .returnValues(ReturnValue.ALL_NEW)
+                .build();
+
+        return Mono.fromFuture(dynamo.updateItem(req))
+                .map(r -> {
+                    var i=r.attributes();
+                    return new Product(
+                            i.get("franchiseId").s(),
+                            i.get("branchId").s(),
+                            i.get("productId").s(),
+                            i.get("name").s(),
+                            Integer.parseInt(i.get("stock").n()),
+                            java.time.Instant.parse(i.get("createdAt").s()),
+                            java.time.Instant.parse(i.getOrDefault("updatedAt", s(Instant.now().toString())).s())
+                    );
+                });
     }
 }

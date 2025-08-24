@@ -52,10 +52,37 @@ public class RouterRest {
                             }
                     )
             )
+            ,
+            @RouterOperation(
+                    path = "/franchises/name",
+                    method = RequestMethod.PATCH,
+                    beanClass = FranchiseHandler.class, beanMethod = "updateName",
+                    operation = @Operation(
+                            operationId = "updateName",
+                            summary = "Update Franchise name",
+                            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true,
+                                    content = @Content(schema = @Schema(implementation = UpdateFranchiseNameRequest.class))),
+                            responses = {
+                                    @ApiResponse(responseCode = "200",
+                                            description = "Franchise name updated Successfully",
+                                            content = @Content(schema = @Schema(implementation = FranchiseResponse.class))),
+                                    @ApiResponse(responseCode = "400",
+                                            description = "Bad Request",
+                                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                                    @ApiResponse(responseCode = "400",
+                                            description = "Franchise Not Found",
+                                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                                    @ApiResponse(responseCode = "500",
+                                            description = "Internal Server Error",
+                                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+                            }
+                    )
+            ),
     })
     @Bean
     RouterFunction<ServerResponse> franchiseRoutes(FranchiseHandler franchiseHandler) {
-        return route(POST("/franchises"), franchiseHandler::create);
+        return route(POST("/franchises"), franchiseHandler::create)
+                .andRoute(PATCH("/franchises/name"), franchiseHandler::updateName);
     }
 
     @RouterOperations({
@@ -83,11 +110,37 @@ public class RouterRest {
                                             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
                             }
                     )
-            )
+            ),
+            @RouterOperation(
+                    path = "/branches/name",
+                    method = RequestMethod.PATCH,
+                    beanClass = BranchHandler.class, beanMethod = "updateName",
+                    operation = @Operation(
+                            operationId = "updateName",
+                            summary = "Update Branch name",
+                            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true,
+                                    content = @Content(schema = @Schema(implementation = UpdateBranchNameRequest.class))),
+                            responses = {
+                                    @ApiResponse(responseCode = "200",
+                                            description = "Branch name updated Successfully",
+                                            content = @Content(schema = @Schema(implementation = BranchResponse.class))),
+                                    @ApiResponse(responseCode = "400",
+                                            description = "Bad Request",
+                                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                                    @ApiResponse(responseCode = "400",
+                                            description = "Branch or Franchise Not Found",
+                                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                                    @ApiResponse(responseCode = "500",
+                                            description = "Internal Server Error",
+                                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+                            }
+                    )
+            ),
     })
     @Bean
     RouterFunction<ServerResponse> branchRoutes(BranchHandler branchHandler) {
-        return route(POST("/branches"), branchHandler::create);
+        return route(POST("/branches"), branchHandler::create)
+                .andRoute(PATCH("/branches/name"), branchHandler::updateName);
     }
 
 
@@ -129,6 +182,31 @@ public class RouterRest {
                             responses = {
                                     @ApiResponse(responseCode = "200",
                                             description = "Product stock updated Successfully",
+                                            content = @Content(schema = @Schema(implementation = ProductResponse.class))),
+                                    @ApiResponse(responseCode = "400",
+                                            description = "Bad Request",
+                                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                                    @ApiResponse(responseCode = "400",
+                                            description = "Branch or Product Not Found",
+                                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                                    @ApiResponse(responseCode = "500",
+                                            description = "Internal Server Error",
+                                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+                            }
+                    )
+            ),
+            @RouterOperation(
+                    path = "/products/name",
+                    method = RequestMethod.PATCH,
+                    beanClass = ProductHandler.class, beanMethod = "updateName",
+                    operation = @Operation(
+                            operationId = "updateName",
+                            summary = "Update name from a Product",
+                            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true,
+                                    content = @Content(schema = @Schema(implementation = UpdateProductNameRequest.class))),
+                            responses = {
+                                    @ApiResponse(responseCode = "200",
+                                            description = "Product name updated Successfully",
                                             content = @Content(schema = @Schema(implementation = ProductResponse.class))),
                                     @ApiResponse(responseCode = "400",
                                             description = "Bad Request",
@@ -204,6 +282,7 @@ public class RouterRest {
     RouterFunction<ServerResponse> productRoutes(ProductHandler productHandler) {
         return route(POST("/products"), productHandler::create)
                 .andRoute(PATCH("/products/stock"), productHandler::patchStock)
+                .andRoute(PATCH("/products/name"), productHandler::updateName)
                 .andRoute(DELETE("/products"), productHandler::delete)
                 .andRoute(GET("/products/max/{franchiseId}"), productHandler::topPerBranchForFranchise);
     }

@@ -3,9 +3,10 @@ package co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.handler;
 import co.nequi.franquicias_api_hexagonal.domain.api.BranchServicePort;
 import co.nequi.franquicias_api_hexagonal.domain.exceptions.DataNotFoundException;
 import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.dto.request.CreateBranchRequest;
+import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.dto.request.UpdateBranchNameRequest;
+import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.mapper.BranchMapper;
 import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.util.exception.ErrorResponse;
 import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.util.exception.RequestValidator;
-import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.mapper.BranchMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -34,6 +35,20 @@ public class BranchHandler {
                         .created(URI.create(serverRequest.uri().toString().concat("/").concat(br.id())))
                         .contentType(MediaType.APPLICATION_JSON)
                         .body(fromValue(br)))
+                .onErrorResume(DataNotFoundException.class, e ->
+                        ServerResponse.badRequest()
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .bodyValue(new ErrorResponse("400", e.getMessage())));
+    }
+
+    public Mono<ServerResponse> updateName(ServerRequest serverRequest) {
+        return serverRequest.bodyToMono(UpdateBranchNameRequest.class)
+                .flatMap(requestValidator::validate)
+                .flatMap(body -> branchUseCase.updateName(body.branchId(), body.name()))
+                .map(branchMapper::toBranchResponse)
+                .flatMap(fr -> ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(fromValue(fr)))
                 .onErrorResume(DataNotFoundException.class, e ->
                         ServerResponse.badRequest()
                                 .contentType(MediaType.APPLICATION_JSON)

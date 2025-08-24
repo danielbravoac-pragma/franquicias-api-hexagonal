@@ -6,7 +6,7 @@ plugins {
 
 group = 'co.nequi'
 version = '0.0.1-BETA'
-description = 'Servicio de Franquicias - Arquitectura Hexagonal'
+description = 'Franchises Service for manage Franchise, Branches and Products'
 
 java {
 	toolchain {

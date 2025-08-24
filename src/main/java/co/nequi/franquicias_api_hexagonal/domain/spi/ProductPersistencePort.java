@@ -11,4 +11,8 @@ public interface ProductPersistencePort {
     Mono<Product> updateStock(String franchiseId, String branchId, String productId, Integer newStock);
 
     Mono<Product> findTopByBranch(String franchiseId, String branchId);
+
+    Mono<Product> findById(String productId);
+
+    Mono<Product> updateName(String franchiseId, String branchId, String productId, String newName);
 }
