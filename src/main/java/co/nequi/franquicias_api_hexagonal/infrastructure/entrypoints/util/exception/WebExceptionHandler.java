@@ -1,4 +1,4 @@
-package co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.exception;
+package co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.util.exception;
 
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler;

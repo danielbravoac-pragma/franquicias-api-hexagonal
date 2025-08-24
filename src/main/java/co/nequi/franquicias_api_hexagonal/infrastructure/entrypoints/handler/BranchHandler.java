@@ -1,10 +1,10 @@
 package co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.handler;
 
+import co.nequi.franquicias_api_hexagonal.domain.api.BranchServicePort;
 import co.nequi.franquicias_api_hexagonal.domain.exceptions.DataNotFoundException;
-import co.nequi.franquicias_api_hexagonal.domain.usecase.BranchUseCase;
 import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.dto.request.CreateBranchRequest;
-import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.exception.ErrorResponse;
-import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.exception.RequestValidator;
+import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.util.exception.ErrorResponse;
+import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.util.exception.RequestValidator;
 import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.mapper.BranchMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -21,7 +21,7 @@ import static org.springframework.web.reactive.function.BodyInserters.fromValue;
 @RequiredArgsConstructor
 public class BranchHandler {
 
-    private final BranchUseCase branchUseCase;
+    private final BranchServicePort branchUseCase;
     private final BranchMapper branchMapper;
     private final RequestValidator requestValidator;
 

@@ -4,5 +4,5 @@ import co.nequi.franquicias_api_hexagonal.domain.model.Franchise;
 import reactor.core.publisher.Mono;
 
 public interface FranchiseServicePort {
-    Mono<Franchise> apply(String name);
+    public Mono<Franchise> apply(String name);
 }

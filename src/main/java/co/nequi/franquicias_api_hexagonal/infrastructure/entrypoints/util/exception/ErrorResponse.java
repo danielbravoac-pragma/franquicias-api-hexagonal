@@ -1,4 +1,4 @@
-package co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.exception;
+package co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.util.exception;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

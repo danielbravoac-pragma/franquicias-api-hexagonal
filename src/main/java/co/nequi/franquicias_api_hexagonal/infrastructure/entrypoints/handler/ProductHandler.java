@@ -1,12 +1,12 @@
 package co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.handler;
 
+import co.nequi.franquicias_api_hexagonal.domain.api.ProductServicePort;
 import co.nequi.franquicias_api_hexagonal.domain.exceptions.DataNotFoundException;
-import co.nequi.franquicias_api_hexagonal.domain.usecase.ProductUseCase;
 import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.dto.request.CreateProductRequest;
 import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.dto.request.DeleteProductRequest;
 import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.dto.request.UpdateStockRequest;
-import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.exception.ErrorResponse;
-import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.exception.RequestValidator;
+import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.util.exception.ErrorResponse;
+import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.util.exception.RequestValidator;
 import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.mapper.ProductMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -22,7 +22,7 @@ import static org.springframework.web.reactive.function.BodyInserters.fromValue;
 @Component
 @RequiredArgsConstructor
 public class ProductHandler {
-    private final ProductUseCase productUseCase;
+    private final ProductServicePort productUseCase;
     private final ProductMapper productMapper;
     private final RequestValidator requestValidator;
 

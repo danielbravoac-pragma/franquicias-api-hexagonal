@@ -1,8 +1,8 @@
 package co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.handler;
 
-import co.nequi.franquicias_api_hexagonal.domain.usecase.FranchiseUseCase;
+import co.nequi.franquicias_api_hexagonal.domain.api.FranchiseServicePort;
 import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.dto.request.CreateFranchiseRequest;
-import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.exception.RequestValidator;
+import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.util.exception.RequestValidator;
 import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.mapper.FranchiseMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -18,7 +18,7 @@ import static org.springframework.web.reactive.function.BodyInserters.fromValue;
 @Component
 @RequiredArgsConstructor
 public class FranchiseHandler {
-    private final FranchiseUseCase franchiseUseCase;
+    private final FranchiseServicePort franchiseUseCase;
     private final FranchiseMapper franchiseMapper;
     private final RequestValidator requestValidator;
 

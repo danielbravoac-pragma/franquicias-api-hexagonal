@@ -1,4 +1,4 @@
-package co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.config;
+package co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.util.config;
 
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.context.annotation.Bean;

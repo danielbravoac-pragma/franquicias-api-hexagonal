@@ -1,4 +1,4 @@
-package co.nequi.franquicias_api_hexagonal.domain.exceptions;
+package co.nequi.franquicias_api_hexagonal.domain.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

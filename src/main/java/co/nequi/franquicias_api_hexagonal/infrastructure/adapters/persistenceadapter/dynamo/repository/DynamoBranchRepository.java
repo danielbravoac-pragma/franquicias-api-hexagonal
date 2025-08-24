@@ -83,7 +83,7 @@ public class DynamoBranchRepository implements BranchPersistencePort {
     @Override
     public Mono<Branch> findById(String branchId) {
         QueryRequest q = QueryRequest.builder()
-                .tableName(DynamoParams.TABLE_NAME.getValue()) // o props.tableName()
+                .tableName(DynamoParams.TABLE_NAME.getValue())
                 .indexName(DynamoParams.GSI_BRANCH_BY_ID_INDEX.getValue())
                 .keyConditionExpression("branchId = :b")
                 .expressionAttributeValues(Map.of(":b", s(branchId)))

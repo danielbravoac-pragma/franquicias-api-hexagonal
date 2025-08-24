@@ -1,6 +1,7 @@
 package co.nequi.franquicias_api_hexagonal.domain.usecase;
 
-import co.nequi.franquicias_api_hexagonal.domain.exceptions.ErrorMessages;
+import co.nequi.franquicias_api_hexagonal.domain.api.BranchServicePort;
+import co.nequi.franquicias_api_hexagonal.domain.enums.ErrorMessages;
 import co.nequi.franquicias_api_hexagonal.domain.model.Branch;
 import co.nequi.franquicias_api_hexagonal.domain.spi.BranchPersistencePort;
 import co.nequi.franquicias_api_hexagonal.domain.spi.FranchisePersistencePort;
@@ -13,11 +14,12 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class BranchUseCase {
+public class BranchUseCase implements BranchServicePort {
 
     private final BranchPersistencePort branchPersistencePort;
     private final FranchisePersistencePort franchisePersistencePort;
 
+    @Override
     public Mono<Branch> apply(Branch branch) {
         Branch branchMapped = new Branch(branch.franchiseId(), UUID.randomUUID().toString(), branch.name().trim(), Instant.now());
         return franchisePersistencePort.exists(branch.franchiseId())

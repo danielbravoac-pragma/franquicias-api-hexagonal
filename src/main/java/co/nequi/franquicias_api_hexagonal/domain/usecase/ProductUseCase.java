@@ -1,7 +1,8 @@
 package co.nequi.franquicias_api_hexagonal.domain.usecase;
 
+import co.nequi.franquicias_api_hexagonal.domain.api.ProductServicePort;
 import co.nequi.franquicias_api_hexagonal.domain.exceptions.DataNotFoundException;
-import co.nequi.franquicias_api_hexagonal.domain.exceptions.ErrorMessages;
+import co.nequi.franquicias_api_hexagonal.domain.enums.ErrorMessages;
 import co.nequi.franquicias_api_hexagonal.domain.model.BranchTopProduct;
 import co.nequi.franquicias_api_hexagonal.domain.model.Product;
 import co.nequi.franquicias_api_hexagonal.domain.spi.BranchPersistencePort;
@@ -16,11 +17,12 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class ProductUseCase {
+public class ProductUseCase implements ProductServicePort {
 
     private final ProductPersistencePort productPersistencePort;
     private final BranchPersistencePort branchPersistencePort;
 
+    @Override
     public Mono<Product> add(Product product) {
         return branchPersistencePort.findById(product.branchId())
                 .switchIfEmpty(Mono.error(
@@ -39,6 +41,7 @@ public class ProductUseCase {
                 });
     }
 
+    @Override
     public Mono<Product> updateStock(Product product) {
         return branchPersistencePort.findById(product.branchId())
                 .switchIfEmpty(Mono.error(
@@ -51,6 +54,7 @@ public class ProductUseCase {
                         product.stock()));
     }
 
+    @Override
     public Mono<Void> delete(Product product) {
         return branchPersistencePort.findById(product.branchId())
                 .switchIfEmpty(Mono.error(
@@ -63,6 +67,7 @@ public class ProductUseCase {
                 ));
     }
 
+    @Override
     public Flux<BranchTopProduct> findTopPerBranchForFranchise(String franchiseId) {
         return branchPersistencePort.listByFranchise(franchiseId)
                 .flatMap(b ->

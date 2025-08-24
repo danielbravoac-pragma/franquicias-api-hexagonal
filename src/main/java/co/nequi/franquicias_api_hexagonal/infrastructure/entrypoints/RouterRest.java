@@ -5,7 +5,7 @@ import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.dto.respons
 import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.dto.response.BranchTopProductResponse;
 import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.dto.response.FranchiseResponse;
 import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.dto.response.ProductResponse;
-import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.exception.ErrorResponse;
+import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.util.exception.ErrorResponse;
 import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.handler.BranchHandler;
 import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.handler.FranchiseHandler;
 import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.handler.ProductHandler;
