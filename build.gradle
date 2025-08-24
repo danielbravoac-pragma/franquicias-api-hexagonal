@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'co.nequi'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1-BETA'
 description = 'Servicio de Franquicias - Arquitectura Hexagonal'
 
 java {
@@ -25,11 +25,32 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
+    // Validation
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // WebFlux
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+    // OpenAPI
+    implementation "org.springdoc:springdoc-openapi-starter-webflux-ui:2.8.10"
+
+    // DynamoDB SDK v2 + Enhanced Client (async-friendly)
+    implementation platform("software.amazon.awssdk:bom:2.25.62")
+    implementation "software.amazon.awssdk:dynamodb"
+    implementation "software.amazon.awssdk:dynamodb-enhanced"
+
+    // MapStruct
+    implementation "org.mapstruct:mapstruct:1.6.3"
+    annotationProcessor "org.mapstruct:mapstruct-processor:1.6.3"
+
+    // MapStruct + Lombok
+    annotationProcessor "org.projectlombok:lombok-mapstruct-binding:0.2.0"
+
+    // Lombok
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+
+    //Tests
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'io.projectreactor:reactor-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
