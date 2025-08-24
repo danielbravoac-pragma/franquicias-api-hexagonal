@@ -9,10 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient;
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
-import software.amazon.awssdk.services.dynamodb.model.ConditionalCheckFailedException;
-import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.*;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -34,6 +31,10 @@ public class DynamoFranchiseRepository implements FranchisePersistencePort {
 
     private static AttributeValue s(String v) {
         return AttributeValue.builder().s(v).build();
+    }
+
+    private static Map<String, AttributeValue> key(String keyPk, String keySk, String pkVal, String skVal) {
+        return java.util.Map.of(keyPk, s(pkVal), keySk, s(skVal));
     }
 
     @Override
@@ -86,6 +87,29 @@ public class DynamoFranchiseRepository implements FranchisePersistencePort {
                             i.get("franchiseId").s(),
                             i.get("name").s(),
                             Instant.parse(i.get("createdAt").s())));
+                });
+    }
+
+    @Override
+    public Mono<Franchise> updateName(String franchiseId, String newName) {
+        var req = UpdateItemRequest.builder()
+                .tableName(DynamoParams.TABLE_NAME.getValue())
+                .key(key(DynamoParams.PK.getValue(), DynamoParams.SK.getValue(), pkValue(franchiseId), skValue()))
+                .updateExpression("SET #n = :nv, #ua = :ts")
+                .expressionAttributeNames(Map.of("#n", "name", "#ua", "updatedAt"))
+                .expressionAttributeValues(Map.of(":nv", s(newName), ":ts", s(Instant.now().toString())))
+                .conditionExpression(DynamoParams.ATTRIBUTE_EXISTS_PK_AND_SK.getValue())
+                .returnValues(ReturnValue.ALL_NEW)
+                .build();
+
+        return Mono.fromFuture(dynamo.updateItem(req))
+                .map(r -> {
+                    var i = r.attributes();
+                    return new Franchise(
+                            i.get("franchiseId").s(),
+                            i.get("name").s(),
+                            java.time.Instant.parse(i.get("createdAt").s())
+                    );
                 });
     }
 }

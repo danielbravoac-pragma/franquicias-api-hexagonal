@@ -35,6 +35,9 @@ public class DynamoBranchRepository implements BranchPersistencePort {
         return AttributeValue.builder().s(v).build();
     }
 
+    private static Map<String, AttributeValue> key(String keyPk, String keySk, String pkVal, String skVal) {
+        return java.util.Map.of(keyPk, s(pkVal), keySk, s(skVal));
+    }
 
     @Override
     public Mono<Branch> add(Branch branch) {
@@ -97,6 +100,30 @@ public class DynamoBranchRepository implements BranchPersistencePort {
                         i.get("name").s(),
                         Instant.parse(i.get("createdAt").s())
                 ));
+    }
+
+    @Override
+    public Mono<Branch> updateName(String franchiseId, String branchId, String newName) {
+        var req = UpdateItemRequest.builder()
+                .tableName(DynamoParams.TABLE_NAME.getValue())
+                .key(key(DynamoParams.PK.getValue(), DynamoParams.SK.getValue(), pkValue(franchiseId), skValue(branchId)))
+                .updateExpression("SET #n = :nv, #ua = :ts")
+                .expressionAttributeNames(Map.of("#n","name","#ua","updatedAt"))
+                .expressionAttributeValues(Map.of(":nv", s(newName), ":ts", s(Instant.now().toString())))
+                .conditionExpression(DynamoParams.ATTRIBUTE_EXISTS_PK_AND_SK.getValue())
+                .returnValues(ReturnValue.ALL_NEW)
+                .build();
+
+        return Mono.fromFuture(dynamo.updateItem(req))
+                .map(r -> {
+                    var i=r.attributes();
+                    return new Branch(
+                            i.get("franchiseId").s(),
+                            i.get("branchId").s(),
+                            i.get("name").s(),
+                            java.time.Instant.parse(i.get("createdAt").s())
+                    );
+                });
     }
 
 }

@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 public enum ErrorMessages {
 
-    DATA_NOT_FOUND("Data not found");
+    DATA_NOT_FOUND("Id not found in database: ");
 
     private final String message;
 }

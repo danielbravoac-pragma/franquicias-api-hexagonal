@@ -1,9 +1,12 @@
 package co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.handler;
 
 import co.nequi.franquicias_api_hexagonal.domain.api.FranchiseServicePort;
+import co.nequi.franquicias_api_hexagonal.domain.exceptions.DataNotFoundException;
 import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.dto.request.CreateFranchiseRequest;
-import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.util.exception.RequestValidator;
+import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.dto.request.UpdateFranchiseNameRequest;
 import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.mapper.FranchiseMapper;
+import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.util.exception.ErrorResponse;
+import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.util.exception.RequestValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -32,5 +35,20 @@ public class FranchiseHandler {
                         .contentType(MediaType.APPLICATION_JSON)
                         .body(fromValue(fr))
                 );
+    }
+
+    public Mono<ServerResponse> updateName(ServerRequest serverRequest) {
+        return serverRequest.bodyToMono(UpdateFranchiseNameRequest.class)
+                .flatMap(requestValidator::validate)
+                .flatMap(body -> franchiseUseCase.updateName(body.franchiseId(), body.name()))
+                .map(franchiseMapper::toFranchiseResponse)
+                .flatMap(fr -> ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(fromValue(fr))
+                )
+                .onErrorResume(DataNotFoundException.class, e ->
+                        ServerResponse.badRequest()
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .bodyValue(new ErrorResponse("400", e.getMessage())));
     }
 }

@@ -76,4 +76,11 @@ public class ProductUseCase implements ProductServicePort {
                                 .switchIfEmpty(Mono.just(new BranchTopProduct(b.id(), b.name(), null)))
                 );
     }
+
+    @Override
+    public Mono<Product> updateName(String name, String productId) {
+        return productPersistencePort.findById(productId)
+                .switchIfEmpty(Mono.error(new DataNotFoundException(ErrorMessages.DATA_NOT_FOUND.getMessage().concat(productId))))
+                .flatMap(p -> productPersistencePort.updateName(p.franchiseId(), p.branchId(), p.id(), name));
+    }
 }

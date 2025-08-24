@@ -27,4 +27,11 @@ public class BranchUseCase implements BranchServicePort {
                         : Mono.error(new RuntimeException(ErrorMessages.DATA_NOT_FOUND.getMessage().concat("franchiseId").concat(branch.franchiseId()))))
                 .then(Mono.defer(() -> branchPersistencePort.add(branchMapped)));
     }
+
+    @Override
+    public Mono<Branch> updateName(String branchId, String newName) {
+        return branchPersistencePort.findById(branchId)
+                .switchIfEmpty(Mono.error(new RuntimeException(ErrorMessages.DATA_NOT_FOUND.getMessage().concat(branchId))))
+                .flatMap(b -> branchPersistencePort.updateName(b.franchiseId(), b.id(), newName));
+    }
 }
