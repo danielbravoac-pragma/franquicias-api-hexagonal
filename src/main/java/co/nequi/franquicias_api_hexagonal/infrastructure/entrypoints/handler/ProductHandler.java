@@ -1,9 +1,11 @@
 package co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.handler;
 
+import co.nequi.franquicias_api_hexagonal.domain.exceptions.DataNotFoundException;
 import co.nequi.franquicias_api_hexagonal.domain.usecase.ProductUseCase;
 import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.dto.request.CreateProductRequest;
 import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.dto.request.DeleteProductRequest;
 import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.dto.request.UpdateStockRequest;
+import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.exception.ErrorResponse;
 import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.exception.RequestValidator;
 import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.mapper.ProductMapper;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +35,10 @@ public class ProductHandler {
                         .created(URI.create(serverRequest.uri().toString().concat("/").concat(pr.id())))
                         .contentType(MediaType.APPLICATION_JSON)
                         .body(fromValue(pr))
-                );
+                ).onErrorResume(DataNotFoundException.class, e ->
+                        ServerResponse.badRequest()
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .bodyValue(new ErrorResponse("400", e.getMessage())));
     }
 
     public Mono<ServerResponse> patchStock(ServerRequest serverRequest) {
@@ -45,7 +50,11 @@ public class ProductHandler {
                         .ok()
                         .contentType(MediaType.APPLICATION_JSON)
                         .body(fromValue(pr))
-                );
+                )
+                .onErrorResume(DataNotFoundException.class, e ->
+                        ServerResponse.badRequest()
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .bodyValue(new ErrorResponse("400", e.getMessage())));
     }
 
     public Mono<ServerResponse> delete(ServerRequest serverRequest) {
@@ -54,7 +63,11 @@ public class ProductHandler {
                 .flatMap(body -> productUseCase.delete(productMapper.toProductFromDeleteProduct(body)))
                 .flatMap(pr -> ServerResponse
                         .noContent().build()
-                );
+                )
+                .onErrorResume(DataNotFoundException.class, e ->
+                        ServerResponse.badRequest()
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .bodyValue(new ErrorResponse("400", e.getMessage())));
     }
 
     public Mono<ServerResponse> topPerBranchForFranchise(ServerRequest serverRequest) {
@@ -65,6 +78,10 @@ public class ProductHandler {
                         .ok()
                         .contentType(MediaType.APPLICATION_JSON)
                         .body(fromValue(pr))
-                );
+                )
+                .onErrorResume(DataNotFoundException.class, e ->
+                        ServerResponse.badRequest()
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .bodyValue(new ErrorResponse("400", e.getMessage())));
     }
 }

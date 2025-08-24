@@ -1,7 +1,9 @@
 package co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.handler;
 
+import co.nequi.franquicias_api_hexagonal.domain.exceptions.DataNotFoundException;
 import co.nequi.franquicias_api_hexagonal.domain.usecase.BranchUseCase;
 import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.dto.request.CreateBranchRequest;
+import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.exception.ErrorResponse;
 import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.exception.RequestValidator;
 import co.nequi.franquicias_api_hexagonal.infrastructure.entrypoints.mapper.BranchMapper;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +33,10 @@ public class BranchHandler {
                 .flatMap(br -> ServerResponse
                         .created(URI.create(serverRequest.uri().toString().concat("/").concat(br.id())))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .body(fromValue(br)));
+                        .body(fromValue(br)))
+                .onErrorResume(DataNotFoundException.class, e ->
+                        ServerResponse.badRequest()
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .bodyValue(new ErrorResponse("400", e.getMessage())));
     }
 }
