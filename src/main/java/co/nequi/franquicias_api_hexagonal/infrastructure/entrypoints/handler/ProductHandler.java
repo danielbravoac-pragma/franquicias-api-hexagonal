@@ -61,10 +61,8 @@ public class ProductHandler {
     public Mono<ServerResponse> delete(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(DeleteProductRequest.class)
                 .flatMap(requestValidator::validate)
-                .flatMap(body -> productUseCase.delete(productMapper.toProductFromDeleteProduct(body)))
-                .flatMap(pr -> ServerResponse
-                        .noContent().build()
-                )
+                .flatMap(body -> productUseCase.delete(productMapper.toProductFromDeleteProduct(body))) // Mono<Void>
+                .then(ServerResponse.noContent().build())
                 .onErrorResume(DataNotFoundException.class, e ->
                         ServerResponse.badRequest()
                                 .contentType(MediaType.APPLICATION_JSON)

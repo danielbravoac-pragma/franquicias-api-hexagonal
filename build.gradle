@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'co.nequi'
-version = '0.0.1-BETA'
+version = '0.0.1'
 description = 'Franchises Service for manage Franchise, Branches and Products'
 
 java {
