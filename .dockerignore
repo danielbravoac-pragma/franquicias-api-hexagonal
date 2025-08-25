@@ -1,0 +1,8 @@
+.git
+target
+build
+.gradle
+.mvn
+node_modules
+Dockerfile
+*.iml
